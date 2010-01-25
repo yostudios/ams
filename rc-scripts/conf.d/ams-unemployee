@@ -1,0 +1,21 @@
+# AMS configuration
+
+# Each line in here represents a worker's options.
+# This means that for every line in this array, a worker is spawned.
+UNEMPLOYEES=(
+    "opts-for-worker-1 handler1"
+    "opts-for-worker-2 handler2"
+)
+
+# Basically this is the PYTHONPATH to run AMS with.
+AMS_LIBDIR="/path/to/ams"
+
+LOGFILE="/var/log/ams-unemployee.log"
+PIDFILEBASE="/var/run/ams-unemployee"
+
+# Set this if you want to run AMS through some other module than the default
+# worker app. (You probably do.)
+#PYMOD="ams.unemployee.app"
+
+# This is added to every worker's options.
+OTHER_OPTS="-vv"

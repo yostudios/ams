@@ -1,0 +1,43 @@
+#!/sbin/runscript
+
+[[ -z "$PYMOD" ]] && PYMOD="ams.unemployee.app"
+PYTHON="$(which python2.6)"
+
+depend() {
+    after beanstalkd
+}
+
+start() {
+    einfo "Starting ams.unemployee instances"
+    eindent
+    local OPTS="-l $LOGFILE $OTHER_OPTS"
+    local I=0
+    for CONF in "${UNEMPLOYEES[@]}"; do
+        ebegin "$PYMOD $CONF"
+        I=$(($I + 1))
+        PIDFILE="$PIDFILEBASE-$I.pid"
+        # -b: background, -m: make pidfile, -x: executable
+        start-stop-daemon --start --pidfile "$PIDFILE" \
+            -e "PYTHONPATH=$AMS_LIBDIR" -b -m -x "$PYTHON" -- \
+            -m "$PYMOD" $OPTS $CONF
+        eend $?
+    done
+    eoutdent
+}
+
+stop() {
+    einfo "Stopping all ams.unemployee instances..."
+    eindent
+    for PIDFILE in "$PIDFILEBASE"-*.pid; do
+        ebegin "Stopping $PIDFILE"
+        start-stop-daemon --stop --pidfile "$PIDFILE"
+        eend $?
+    done
+    eoutdent
+}
+
+status() {
+    for PIDFILE in "$PIDFILEBASE"-*.pid; do
+        einfo "$PIDFILE: I have no idea"
+    done
+}
