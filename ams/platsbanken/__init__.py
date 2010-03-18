@@ -16,12 +16,14 @@ class Platsbank(object):
         """
         raise NotImplementedError()
 
-    def queue_task(self, priority=None, delay=None):
+    def queue_task(self, priority=None, delay=None, ttr=None):
         """Queue this task on the queue server, setting priority to *priority*,
         and delay insertion to after *delay* seconds.
 
         Note that the job should appear after *delay* seconds, not that this
         method should block for *delay* seconds before inserting.
+
+        If *ttr* is specified, it is the number of seconds a task may run.
 
         As above, if the queue server doesn't handle any or all of the
         features, a ValueError should be raised if that keyword argument is not
@@ -37,7 +39,9 @@ class Platsbank(object):
         Really just calls self.queue_task with a task object constructed from
         the arguments given to this function.
         """
-        return self.queue_task(BaseTask(type_name, args))
+        pass_kws = ("priority", "delay", "ttr")
+        kwds = dict((k, v) for (k, v) in args.items() if k in pass_kws)
+        return self.queue_task(BaseTask(type_name, args), **kwds)
 
 class DummyPlatsbank(Platsbank):
     dsn_name = "dummy"
@@ -45,7 +49,7 @@ class DummyPlatsbank(Platsbank):
     def next_task(self, timeout=None):
         raise RuntimeError("dummy platsbank can't get tasks")
 
-    def queue_task(self, task, priority=None, delay=None):
+    def queue_task(self, task, priority=None, delay=None, ttr=None):
         pass
 
     def accept_task_types(self, type_names=None):

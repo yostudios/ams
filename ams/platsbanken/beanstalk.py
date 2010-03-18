@@ -77,13 +77,14 @@ class BeanstalkPlatsbank(Platsbank):
         if job:
             return self.task_cls.from_job(job)
 
-    def queue_task(self, task, priority=None, delay=None):
+    def queue_task(self, task, priority=None, delay=None, ttr=None):
         """Queue task *task* in beanstalkd and return updated task object."""
         if priority is None: priority = beanstalkc.DEFAULT_PRIORITY
         if delay is None: delay = 0
+        if ttr is None: ttr = beanstalkc.DEFAULT_TTR
         body = task.encode()
         self.client.use(task.type_name)
-        jid = self.client.put(body, priority=priority, delay=delay)
+        jid = self.client.put(body, priority=priority, delay=delay, ttr=ttr)
         job = beanstalkc.Job(self.client, jid, body, reserved=False)
         return self.task_cls.from_job(job)
 
