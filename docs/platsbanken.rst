@@ -1,5 +1,7 @@
-Delegating jobs to those in need
-================================
+.. currentmodule:: ams.platsbanken
+
+:mod:`ams.platsbanken`: Delegating jobs to those in need
+========================================================
 
 When you've got a job you need a guy for, it'd be absurd for you to actually go
 find somebody yourself. We've got all sorts of bureaucracy to through first!
@@ -33,4 +35,5 @@ version :meth:`Platsbank.queue`.
 Reference
 ---------
 
-.. class Platsbank
+.. autoclass:: Platsbank
+   :members:
