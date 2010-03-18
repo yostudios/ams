@@ -10,8 +10,8 @@ from ams.utils import endless_range
 class BaseUnemployee(object):
     logger = logging.getLogger("ams.unemployee")
 
-    def __init__(self, conf, next_task):
-        self.conf = conf
+    def __init__(self, make_context, next_task):
+        self.make_context = make_context
         self.next_task = next_task
 
     def __str__(self):
@@ -89,6 +89,9 @@ class BaseUnemployee(object):
 
         Only used by *execute_task*, and as such may not be relevant.
 
+        The return value is expected to have a *run_task* attribute, which runs
+        the actual task.
+
         Subclasses must override this or *execute_task* to provide logics for
         getting the handler for the correct task.
         """
@@ -97,25 +100,25 @@ class BaseUnemployee(object):
 class SimpleUnemployee(BaseUnemployee):
     """Executes jobs of a single type."""
 
-    def __init__(self, conf, next_task, handler):
-        super(SimpleUnemployee, self).__init__(conf, next_task)
+    def __init__(self, make_context, next_task, handler):
+        super(SimpleUnemployee, self).__init__(make_context, next_task)
         self.handler = handler
 
     @property
     def task_names_handled(self):
-        return self.handler.type_name
+        return [self.handler.type_name]
 
     def handles_task(self, task):
         return task.type_name == self.handler.type_name
 
     def handler_for_task(self, task):
-        return self.handler(self.conf)
+        return self.handler(self.make_context)
 
 class FlexibleUnemployee(BaseUnemployee):
     """Executes jobs of multiple types."""
 
-    def __init__(self, conf, next_task, handlers):
-        super(FlexibleUnemployee, self).__init__(conf, next_task)
+    def __init__(self, make_context, next_task, handlers):
+        super(FlexibleUnemployee, self).__init__(make_context, next_task)
         self.handler_map = dict((h.type_name, h) for h in handlers)
 
     @property
@@ -126,4 +129,4 @@ class FlexibleUnemployee(BaseUnemployee):
         return task.type_name in self.handler_map
 
     def handler_for_task(self, task):
-        return self.handler_map[task.type_name](self.conf)
+        return self.handler_map[task.type_name](self.make_context)
