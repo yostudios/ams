@@ -96,8 +96,9 @@ class UnemployeeApp(object):
     # }}}
 
     def load_conf(self, opts):
+        dsn = self.get_conf_dsn(opts)
         try:
-            conf = parse_conf_dsn(self.get_conf_dsn(opts))
+            conf = parse_conf_dsn(dsn)
         except DSNParseError, e:
             self.invalid_setup("dsn %r: %s" % (dsn, e))
         return conf
@@ -106,8 +107,9 @@ class UnemployeeApp(object):
         return opts.conf_dsn
 
     def setup_platsbanken(self, opts):
+        dsn = self.get_platsbanken_dsn(opts)
         try:
-            platsbank = parse_platsbank_dsn(self.get_platsbanken_dsn(opts))
+            platsbank = parse_platsbank_dsn(dsn)
         except DSNParseError, e:
             self.invalid_setup("dsn %r: %s" % (dsn, e))
         return platsbank
