@@ -1,7 +1,6 @@
 include MANIFEST
 recursive-include ams *.py
+recursive-include tests *.py
 
 include docs/conf.py docs/Makefile
 recursive-include docs *.rst
-recursive-include docs/_templates *
-recursive-include docs/_static *
